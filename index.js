@@ -10,7 +10,7 @@ app.use(express.json()); // To parse incoming request body
 
 // MongoDB Atlas connection
 const mongoURI =
-  "mongodb+srv://Nivethasri:<db_password>@cluster0.ifpwg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+  "mongodb+srv://code:veera@cluster0.8rtm2.mongodb.net/crud_db?retryWrites=true&w=majority";
 
 mongoose
   .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -73,5 +73,5 @@ app.delete("/items/:id", async (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log('Server running on port ${port}');
+  console.log(`Server running on port ${port}`);
 });
