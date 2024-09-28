@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json()); // To parse incoming request body
 
 // MongoDB Atlas connection
-const mongoURI = process.env.MONGO_URI;
+const mongoURI ="mongodb+srv://Nivethasri:Nive@123@cluster0.ifpwg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 mongoose
   .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
