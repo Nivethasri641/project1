@@ -1,16 +1,19 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const dotenv = require("dotenv");
+
+dotenv.config(); // Load environment variables
+
 const app = express();
-const port = 5000; // or process.env.PORT in a production setup
+const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
 app.use(express.json()); // To parse incoming request body
 
 // MongoDB Atlas connection
-const mongoURI =
-  "mongodb+srv://code:veera@cluster0.8rtm2.mongodb.net/crud_db?retryWrites=true&w=majority";
+const mongoURI = process.env.MONGO_URI;
 
 mongoose
   .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -20,6 +23,7 @@ mongoose
 // Mongoose Schema & Model
 const itemSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  registrationNumber: { type: String, required: true }, // New field
 });
 
 const Item = mongoose.model("Item", itemSchema);
@@ -38,12 +42,15 @@ app.get("/items", async (req, res) => {
 
 // Create a new item
 app.post("/items", async (req, res) => {
-  const newItem = new Item({ name: req.body.name });
+  const newItem = new Item({
+    name: req.body.name,
+    registrationNumber: req.body.registrationNumber, // Include the new field
+  });
   try {
     const savedItem = await newItem.save();
-    res.json(savedItem);
+    res.status(201).json(savedItem);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Error saving item: " + err.message });
   }
 });
 
@@ -52,12 +59,18 @@ app.put("/items/:id", async (req, res) => {
   try {
     const updatedItem = await Item.findByIdAndUpdate(
       req.params.id,
-      { name: req.body.name },
-      { new: true },
+      {
+        name: req.body.name,
+        registrationNumber: req.body.registrationNumber, // Include the new field
+      },
+      { new: true, runValidators: true }
     );
+    if (!updatedItem) {
+      return res.status(404).json({ error: "Item not found" });
+    }
     res.json(updatedItem);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Error updating item: " + err.message });
   }
 });
 
